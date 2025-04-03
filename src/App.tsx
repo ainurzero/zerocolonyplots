@@ -5,6 +5,7 @@ import SearchPanel from 'components/SearchPanel';
 import DonationBanner from 'components/DonationBanner';
 import { Land } from 'types';
 import 'styles/index.css';
+import { loadCoordinationData, getLandCoordinates } from './utils/imageCoordUtils';
 
 const App: React.FC = () => {
   const [lands, setLands] = useState<Land[]>([]);
@@ -13,6 +14,7 @@ const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(true); // Dark mode by default
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
+  const [coordsLoaded, setCoordsLoaded] = useState<boolean>(false);
 
   // Toggle dark/light theme
   useEffect(() => {
@@ -23,26 +25,45 @@ const App: React.FC = () => {
     }
   }, [darkMode]);
 
+  // Загрузка данных координат и изображений
+  useEffect(() => {
+    const loadCoords = async () => {
+      try {
+        await loadCoordinationData();
+        setCoordsLoaded(true);
+      } catch (error) {
+        console.error("Error loading coordination data:", error);
+        setError(true);
+      }
+    };
+    
+    loadCoords();
+  }, []);
+
+  // Загрузка данных о землях
   useEffect(() => {
     async function fetchData() {
       try {
+        // Ожидаем загрузку координат, чтобы использовать их
+        if (!coordsLoaded) return;
+        
+        // Используем локальный файл вместо удаленного URL
+        // const response = await axios.get(`/data/lands.json`);
+        // Закомментированный оригинальный код загрузки данных с сервера
         const response = await axios.get(`https://zero.cryptosbp.ru:8443/lands.json`);
+        
         // Преобразуем формат данных из JSON в формат, который ожидает наше приложение
-        const formattedLands = response.data.lands.map((land: any) => ({
-          id: land.id,
-          isSold: land.isSold === "True",
-          owner: land.owner === "None" ? undefined : land.owner,
-          coordinates: {
-            longitude: {
-              min: parseFloat(land.coord.long.min),
-              max: parseFloat(land.coord.long.max)
-            },
-            latitude: {
-              min: parseFloat(land.coord.lat.min),
-              max: parseFloat(land.coord.lat.max)
-            }
-          }
-        }));
+        const formattedLands = response.data.lands.map((land: any) => {
+          // Получаем координаты из закешированных данных
+          const coordinates = getLandCoordinates(parseInt(land.id));
+          
+          return {
+            id: parseInt(land.id),
+            isSold: land.isSold === "True",
+            owner: land.owner === "None" ? undefined : land.owner,
+            coordinates: coordinates
+          };
+        });
         
         setLands(formattedLands);
         setFilteredLands(formattedLands);
@@ -61,8 +82,9 @@ const App: React.FC = () => {
         setLoading(false);
       }
     }
+    
     fetchData();
-  }, []);
+  }, [coordsLoaded]);
 
   // Memoized search function
   const handleSearch = useCallback((results: Land[]) => {

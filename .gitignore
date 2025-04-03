@@ -56,6 +56,8 @@ README.md
 
 # Большие датасеты, которые будут запрашиваться с ВДС
 public/data/*.json
+# Оставляем только coordination.json
+!public/data/coordination.json
 # Оставляем только шаблон empty.json
 !public/data/empty.json
 # public/data/lands-123.json
