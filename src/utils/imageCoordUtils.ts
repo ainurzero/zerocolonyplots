@@ -23,8 +23,8 @@ let coordinationCache: CoordinationData[] = [];
  */
 export const loadCoordinationData = async (): Promise<void> => {
   try {
-    // Используем локальный файл в папке data
-    const response = await axios.get<CoordinationData[]>('/data/coordination.json');
+    // Используем локальный файл в папке data с учетом базового пути
+    const response = await axios.get<CoordinationData[]>(process.env.PUBLIC_URL + '/data/coordination.json');
     // Закомментированный оригинальный URL (если был бы другим)
     // const response = await axios.get<CoordinationData[]>('/data/coordination.json');
     
