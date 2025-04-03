@@ -15,7 +15,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ stats, isLoading }) => {
 
   return (
     <div className="bg-white/90 dark:bg-slate-800/90 rounded-lg shadow-sm p-3 backdrop-blur-sm">
-      <div className="flex flex-wrap justify-between items-center gap-2">
+      <div className="flex flex-col sm:flex-row flex-wrap justify-between items-start sm:items-center gap-3">
         <div className="flex items-center space-x-2">
           <div className="text-sm font-medium text-slate-600 dark:text-slate-300">
             Total Plots:
@@ -25,7 +25,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ stats, isLoading }) => {
           </div>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center">
             <span className="inline-block w-3 h-3 rounded-full bg-red-500 mr-2"></span>
             <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Sold:</span>
