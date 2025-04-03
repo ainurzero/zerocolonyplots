@@ -33,4 +33,14 @@ export interface LandModalProps {
   land: Land;
   imageUrl: string;
   onClose: () => void;
+}
+
+export interface StatsPanelProps {
+  stats: {
+    total: number;
+    sold: number;
+    available: number;
+    soldPercentage: number;
+  };
+  isLoading: boolean;
 } 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import LandCard from '../components/LandCard';
 import LandModal from '../components/LandModal';
 import { LandGridProps } from '../types';
-import generateLandImage from '../utils/generateLandImage';
+import { getLandImageUrl } from '../utils/imageCoordUtils';
 
 const LandGrid: React.FC<LandGridProps> = ({ lands, loading }) => {
   const [page, setPage] = useState<number>(1);
@@ -184,7 +184,7 @@ const LandGrid: React.FC<LandGridProps> = ({ lands, loading }) => {
           className={`space-y-3 transition-all duration-300 ${highlight ? 'opacity-80 scale-[0.99]' : 'opacity-100 scale-100'}`}
         >
           {displayedLands.map((land) => {
-            const imageUrl = generateLandImage(land.id);
+            const imageUrl = getLandImageUrl(land.id);
             return (
               <div 
                 key={land.id} 
@@ -350,7 +350,7 @@ const LandGrid: React.FC<LandGridProps> = ({ lands, loading }) => {
       {selectedLand && (
         <LandModal
           land={selectedLand}
-          imageUrl={generateLandImage(selectedLand.id)}
+          imageUrl={getLandImageUrl(selectedLand.id)}
           onClose={() => setSelectedLand(null)}
         />
       )}

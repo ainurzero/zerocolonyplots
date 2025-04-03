@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import LandGrid from 'components/LandGrid';
 import SearchPanel from 'components/SearchPanel';
 import DonationBanner from 'components/DonationBanner';
+import StatsPanel from 'components/StatsPanel';
 import { Land } from 'types';
 import 'styles/index.css';
 import { loadCoordinationData, getLandCoordinates } from './utils/imageCoordUtils';
@@ -15,6 +16,18 @@ const App: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
   const [coordsLoaded, setCoordsLoaded] = useState<boolean>(false);
+
+  // Статистика по участкам
+  const stats = useMemo(() => {
+    if (lands.length === 0) return { total: 0, sold: 0, available: 0, soldPercentage: 0 };
+    
+    const soldLands = lands.filter(land => land.isSold).length;
+    const total = lands.length;
+    const available = total - soldLands;
+    const soldPercentage = Math.round((soldLands / total) * 100);
+    
+    return { total, sold: soldLands, available, soldPercentage };
+  }, [lands]);
 
   // Toggle dark/light theme
   useEffect(() => {
@@ -129,6 +142,11 @@ const App: React.FC = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-[1600px]">
+        {/* Статистика по участкам */}
+        <div className="mb-6">
+          <StatsPanel stats={stats} isLoading={loading} />
+        </div>
+        
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1">
             <SearchPanel lands={lands} onSearchResults={handleSearch} />

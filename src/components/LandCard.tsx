@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { LandCardProps } from '../types';
-import generateLandImage from '../utils/generateLandImage';
 import LandModal from '../components/LandModal';
+import { getLandImageUrl } from '../utils/imageCoordUtils';
 
 const LandCard: React.FC<LandCardProps> = ({ land, onClick }) => {
-  // Generate image based on plot ID
-  const imageUrl = useMemo(() => generateLandImage(land.id), [land.id]);
+  // Get image URL from coordination data
+  const imageUrl = useMemo(() => getLandImageUrl(land.id), [land.id]);
   const [showModal, setShowModal] = useState(false);
 
   const handleClick = () => {
