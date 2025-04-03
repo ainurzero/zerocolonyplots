@@ -55,6 +55,6 @@ README.md
 # README_public.md не игнорируем
 
 # Большие датасеты, которые будут запрашиваться с ВДС
-public/data/*.json
-public/data/lands-123.json
+# public/data/*.json
+# public/data/lands-123.json
 # Оставляем lands.json и тестовый файл для GitHub 

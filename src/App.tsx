@@ -26,7 +26,7 @@ const App: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(`${process.env.PUBLIC_URL}/data/lands.json`);
+        const response = await axios.get(`${process.env.PUBLIC_URL}/data/lands-123.json`);
         // Преобразуем формат данных из JSON в формат, который ожидает наше приложение
         const formattedLands = response.data.lands.map((land: any) => ({
           id: land.id,
