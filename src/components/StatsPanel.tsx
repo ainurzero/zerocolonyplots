@@ -18,7 +18,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ stats, isLoading }) => {
       <div className="flex flex-wrap justify-between items-center gap-2">
         <div className="flex items-center space-x-2">
           <div className="text-sm font-medium text-slate-600 dark:text-slate-300">
-            Земельные участки:
+            Total Plots:
           </div>
           <div className="text-sm font-bold text-slate-800 dark:text-white">
             {stats.total.toLocaleString()}
@@ -28,13 +28,13 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ stats, isLoading }) => {
         <div className="flex items-center space-x-4">
           <div className="flex items-center">
             <span className="inline-block w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Продано:</span>
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Sold:</span>
             <span className="ml-1 text-sm font-bold text-slate-800 dark:text-white">{stats.sold.toLocaleString()}</span>
           </div>
           
           <div className="flex items-center">
             <span className="inline-block w-3 h-3 rounded-full bg-green-500 mr-2"></span>
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Доступно:</span>
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Available:</span>
             <span className="ml-1 text-sm font-bold text-slate-800 dark:text-white">{stats.available.toLocaleString()}</span>
           </div>
           
