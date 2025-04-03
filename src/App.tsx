@@ -4,6 +4,7 @@ import LandGrid from 'components/LandGrid';
 import SearchPanel from 'components/SearchPanel';
 import DonationBanner from 'components/DonationBanner';
 import StatsPanel from 'components/StatsPanel';
+import Footer from 'components/Footer';
 import { Land } from 'types';
 import 'styles/index.css';
 import { loadCoordinationData, getLandCoordinates } from './utils/imageCoordUtils';
@@ -156,6 +157,8 @@ const App: React.FC = () => {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
