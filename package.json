@@ -2,7 +2,7 @@
   "name": "zerocolony_frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ainurzero.github.io/zerocolonyexplorer",
+  "homepage": "https://ainurzero.github.io/zerocolonyplots",
   "dependencies": {
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.0",

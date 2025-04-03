@@ -28,7 +28,7 @@ const App: React.FC = () => {
       try {
         const response = await axios.get(`${process.env.PUBLIC_URL}/data/lands.json`);
         // Преобразуем формат данных из JSON в формат, который ожидает наше приложение
-        const formattedLands = response.data.map((land: any) => ({
+        const formattedLands = response.data.lands.map((land: any) => ({
           id: land.id,
           isSold: land.isSold === "True",
           owner: land.owner === "None" ? undefined : land.owner,
@@ -48,15 +48,13 @@ const App: React.FC = () => {
         setFilteredLands(formattedLands);
         setLoading(false);
         
-        // Set last updated time
-        updateLastUpdatedTime();
-        
-        // Set interval to update every 5 minutes
-        const intervalId = setInterval(() => {
-          updateLastUpdatedTime();
-        }, 5 * 60 * 1000);
-        
-        return () => clearInterval(intervalId);
+        // Set last updated time from the file
+        if (response.data.updateTime) {
+          const date = new Date(response.data.updateTime);
+          const hours = date.getHours().toString().padStart(2, '0');
+          const minutes = date.getMinutes().toString().padStart(2, '0');
+          setLastUpdated(`${hours}:${minutes} UTC`);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         setError(true);
@@ -65,14 +63,6 @@ const App: React.FC = () => {
     }
     fetchData();
   }, []);
-  
-  // Update the last updated time
-  const updateLastUpdatedTime = () => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    setLastUpdated(`${hours}:${minutes}`);
-  };
 
   // Memoized search function
   const handleSearch = useCallback((results: Land[]) => {
@@ -98,16 +88,16 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                className="p-2 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
               >
                 {darkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                   </svg>
                 )}
               </button>
@@ -115,26 +105,17 @@ const App: React.FC = () => {
           </div>
         </div>
       </header>
-      
-      <div className="container mx-auto px-4 py-8 max-w-[1600px]">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+      <main className="container mx-auto px-4 py-8 max-w-[1600px]">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-1">
             <SearchPanel lands={lands} onSearchResults={handleSearch} />
           </div>
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-3">
             <LandGrid lands={filteredLands} loading={loading} />
           </div>
         </div>
-
-        <div className="mt-10 mb-10 text-center text-sm text-slate-500 dark:text-slate-400">
-          <p>Mars colonization project. All land plots are unique NFTs on the blockchain.</p>
-          <p className="mt-1">Data updated every 5 minutes.</p>
-        </div>
-      </div>
-      
-      <div className="w-full">
-        <DonationBanner />
-      </div>
+      </main>
     </div>
   );
 };
