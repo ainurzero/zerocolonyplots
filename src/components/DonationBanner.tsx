@@ -17,7 +17,7 @@ const DonationBanner: React.FC = () => {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
-          <p className="text-sm md:text-base">Support the developer. Together we will make Zero Colony great!</p>
+          <p className="text-sm md:text-base">Support the developer — every little donation helps bring more updates!</p>
         </div>
         
         <div className="flex items-center relative">
