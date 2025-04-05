@@ -18,6 +18,22 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortBy, setSortBy] = useState<'landsCount' | 'percentage'>('landsCount');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [expandedOwner, setExpandedOwner] = useState<string | null>(null);
+  
+  // Map для быстрого доступа к землям по владельцу
+  const ownerLandsMap = useMemo(() => {
+    const map = new Map<string, Land[]>();
+    
+    lands.forEach(land => {
+      if (land.owner) {
+        const ownerLands = map.get(land.owner) || [];
+        ownerLands.push(land);
+        map.set(land.owner, ownerLands);
+      }
+    });
+    
+    return map;
+  }, [lands]);
 
   // Расчет данных о владельцах
   useEffect(() => {
@@ -75,6 +91,15 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
       setSortOrder('desc');
     }
   };
+  
+  // Обработчик клика по владельцу
+  const handleOwnerClick = (address: string) => {
+    if (expandedOwner === address) {
+      setExpandedOwner(null); // Закрываем, если уже открыт
+    } else {
+      setExpandedOwner(address); // Открываем новый
+    }
+  };
 
   if (loading) {
     return (
@@ -89,6 +114,12 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
       </div>
     );
   }
+
+  // Функция для форматирования адреса
+  const formatAddress = (address: string) => {
+    if (address === 'Others') return 'Others';
+    return `${address.slice(0, 8)}...${address.slice(-6)}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -179,31 +210,90 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
           filteredAndSortedOwners.map((owner) => (
             <div 
               key={owner.address} 
-              className="bg-white dark:bg-slate-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-slate-800 rounded-lg shadow hover:shadow-md transition-all duration-300"
             >
-              <div className="flex justify-between flex-wrap gap-2">
-                <div className="space-y-2">
-                  <h3 className="font-bold text-slate-800 dark:text-white break-all font-mono">
-                    {owner.address}
-                  </h3>
+              <div 
+                className="p-4 cursor-pointer"
+                onClick={() => handleOwnerClick(owner.address)}
+              >
+                <div className="flex justify-between flex-wrap gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-slate-800 dark:text-white font-mono">
+                        {formatAddress(owner.address)}
+                      </h3>
+                      <button className="text-blue-500 hover:text-blue-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          {expandedOwner === owner.address ? (
+                            <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
+                          ) : (
+                            <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                          )}
+                        </svg>
+                      </button>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 break-all">{owner.address}</p>
+                  </div>
+                  <div className="flex gap-3 items-start">
+                    <div className="text-right">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">Lands</div>
+                      <div className="font-bold text-slate-800 dark:text-white">{owner.landsCount}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">Percentage</div>
+                      <div className="font-bold text-slate-800 dark:text-white">{owner.percentage}%</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex gap-3 items-start">
-                  <div className="text-right">
-                    <div className="text-sm text-slate-600 dark:text-slate-400">Lands</div>
-                    <div className="font-bold text-slate-800 dark:text-white">{owner.landsCount}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm text-slate-600 dark:text-slate-400">Percentage</div>
-                    <div className="font-bold text-slate-800 dark:text-white">{owner.percentage}%</div>
-                  </div>
+                <div className="mt-3 w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#f85266] to-[#b243a7]" 
+                    style={{ width: `${owner.percentage}%` }}
+                  ></div>
                 </div>
               </div>
-              <div className="mt-3 w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-[#f85266] to-[#b243a7]" 
-                  style={{ width: `${owner.percentage}%` }}
-                ></div>
-              </div>
+              
+              {/* Раскрывающийся список земель */}
+              {expandedOwner === owner.address && (
+                <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3 animate-fade-in">
+                  <h4 className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Land Plots ({owner.landsCount})</h4>
+                  
+                  <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                    <div className="max-h-80 overflow-y-auto">
+                      <table className="min-w-full divide-y divide-slate-300 dark:divide-slate-700">
+                        <thead className="bg-slate-50 dark:bg-slate-700">
+                          <tr>
+                            <th scope="col" className="py-2 px-3 text-left text-xs font-medium text-slate-500 dark:text-slate-300 uppercase tracking-wider">
+                              ID
+                            </th>
+                            <th scope="col" className="py-2 px-3 text-left text-xs font-medium text-slate-500 dark:text-slate-300 uppercase tracking-wider">
+                              Longitude
+                            </th>
+                            <th scope="col" className="py-2 px-3 text-left text-xs font-medium text-slate-500 dark:text-slate-300 uppercase tracking-wider">
+                              Latitude
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                          {ownerLandsMap.get(owner.address)?.map((land) => (
+                            <tr key={land.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/60">
+                              <td className="py-2 px-3 whitespace-nowrap text-sm font-medium text-slate-800 dark:text-white">
+                                #{land.id}
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300 font-mono">
+                                {land.coordinates.longitude.min.toFixed(2)}° - {land.coordinates.longitude.max.toFixed(2)}°
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300 font-mono">
+                                {land.coordinates.latitude.min.toFixed(2)}° - {land.coordinates.latitude.max.toFixed(2)}°
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ))
         )}
