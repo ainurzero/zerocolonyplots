@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Land } from '../types';
+import OwnersChart from '../components/OwnersChart';
 
 interface Owner {
   address: string;
@@ -138,6 +139,9 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
           </div>
         </div>
       </div>
+      
+      {/* График распределения владельцев */}
+      <OwnersChart owners={owners} loading={loading} />
       
       {/* Сводная статистика */}
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-4">

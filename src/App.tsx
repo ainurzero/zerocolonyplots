@@ -145,7 +145,7 @@ const App: React.FC = () => {
         
         <header className="bg-white/90 dark:bg-slate-800/90 shadow-md py-4 backdrop-blur-sm sticky top-0 z-10">
           <div className="container mx-auto px-4 max-w-[1600px]">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+            <div className="flex flex-col md:flex-row md:items-center gap-4">
               <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#f85266] to-[#b243a7] font-azonix">
                   ZERO COLONY EXPLORER
@@ -167,9 +167,11 @@ const App: React.FC = () => {
                 </button>
               </div>
               
-              <div className="flex justify-between items-center">
-                <Navigation />
-                <div className="flex items-center space-x-4">
+              <div className="flex-1 flex flex-col md:flex-row md:justify-between items-center">
+                <div className="flex-grow flex justify-center">
+                  <Navigation />
+                </div>
+                <div className="flex items-center space-x-4 mt-2 md:mt-0">
                   <div className="text-sm text-slate-600 dark:text-slate-400">
                     Updated at {lastUpdated}
                   </div>
