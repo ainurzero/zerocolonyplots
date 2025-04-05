@@ -1,13 +1,46 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import LandGrid from 'components/LandGrid';
-import SearchPanel from 'components/SearchPanel';
 import DonationBanner from 'components/DonationBanner';
-import StatsPanel from 'components/StatsPanel';
 import Footer from 'components/Footer';
 import { Land } from 'types';
 import 'styles/index.css';
 import { loadCoordinationData, getLandCoordinates } from './utils/imageCoordUtils';
+import PlotFinderPage from './pages/PlotFinderPage';
+import OwnersPage from './pages/OwnersPage';
+
+// Базовый путь для GitHub Pages
+const basename = process.env.PUBLIC_URL || '';
+
+// Компонент для навигации
+const Navigation: React.FC = () => {
+  const location = useLocation();
+  
+  return (
+    <div className="flex space-x-6">
+      <Link
+        to={`${basename}/`}
+        className={`text-lg font-medium transition-colors ${
+          location.pathname === `${basename}/` || location.pathname === `${basename}`
+            ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#f85266] to-[#b243a7]'
+            : 'text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white'
+        }`}
+      >
+        Plot Finder
+      </Link>
+      <Link
+        to={`${basename}/owners`}
+        className={`text-lg font-medium transition-colors ${
+          location.pathname === `${basename}/owners`
+            ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#f85266] to-[#b243a7]'
+            : 'text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white'
+        }`}
+      >
+        Owners
+      </Link>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   const [lands, setLands] = useState<Land[]>([]);
@@ -106,60 +139,87 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-white transition-colors duration-200`}>
-      
-      <div className="w-full">
-        <DonationBanner />
-      </div>
-      
-      <header className="bg-white/90 dark:bg-slate-800/90 shadow-md py-4 backdrop-blur-sm">
-        <div className="container mx-auto px-4 max-w-[1600px]">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#f85266] to-[#b243a7] font-azonix">
-              ZERO COLONY EXPLORER
-            </h1>
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Updated at {lastUpdated}
-              </div>
-              <button
-                onClick={() => setDarkMode(!darkMode)}
-                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {darkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8 max-w-[1600px]">
-        {/* Статистика по участкам */}
-        <div className="mb-6">
-          <StatsPanel stats={stats} isLoading={loading} />
+    <Router basename={basename}>
+      <div className={`min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-white transition-colors duration-200`}>
+        
+        <div className="w-full">
+          <DonationBanner />
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <SearchPanel lands={lands} onSearchResults={handleSearch} />
+        <header className="bg-white/90 dark:bg-slate-800/90 shadow-md py-4 backdrop-blur-sm sticky top-0 z-10">
+          <div className="container mx-auto px-4 max-w-[1600px]">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+              <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#f85266] to-[#b243a7] font-azonix">
+                  ZERO COLONY EXPLORER
+                </h1>
+                <button
+                  onClick={() => setDarkMode(!darkMode)}
+                  className="md:hidden p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {darkMode ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <Navigation />
+                <div className="flex items-center space-x-4">
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
+                    Updated at {lastUpdated}
+                  </div>
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="hidden md:block p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                    title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                  >
+                    {darkMode ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="lg:col-span-3">
-            <LandGrid lands={filteredLands} loading={loading} />
-          </div>
-        </div>
-      </main>
+        </header>
 
-      <Footer />
-    </div>
+        <main className="container mx-auto px-4 py-8 max-w-[1600px]">
+          <Routes>
+            <Route path="/" element={
+              <PlotFinderPage 
+                lands={lands}
+                filteredLands={filteredLands}
+                loading={loading}
+                onSearchResults={handleSearch}
+                stats={stats}
+              />
+            } />
+            <Route path="/owners" element={
+              <OwnersPage 
+                lands={lands}
+                loading={loading}
+              />
+            } />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
