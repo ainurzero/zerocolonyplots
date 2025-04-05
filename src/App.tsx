@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import DonationBanner from 'components/DonationBanner';
 import Footer from 'components/Footer';
@@ -136,7 +136,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Router>
+    <HashRouter>
       <div className={`min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-white transition-colors duration-200`}>
         
         <div className="w-full">
@@ -216,7 +216,7 @@ const App: React.FC = () => {
 
         <Footer />
       </div>
-    </Router>
+    </HashRouter>
   );
 };
 
