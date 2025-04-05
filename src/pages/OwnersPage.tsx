@@ -139,7 +139,7 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
       
       {/* Фильтры и поиск */}
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-4">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
+        <div className="flex flex-col md:flex-row gap-4 items-start">
           <div className="flex-1">
             <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
               Search by address
@@ -153,12 +153,12 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
             />
           </div>
           
-          <div>
+          <div className="mt-8 md:mt-0 ml-auto">
             <button
               onClick={toggleSortOrder}
               className="px-4 py-2 rounded-md bg-blue-600 text-white"
             >
-              Sort by Land Count {sortOrder === 'asc' ? '↑' : '↓'}
+              {sortOrder === 'asc' ? 'Sort ↑' : 'Sort ↓'}
             </button>
           </div>
         </div>

@@ -143,7 +143,7 @@ const App: React.FC = () => {
           <DonationBanner />
         </div>
         
-        <header className="bg-white/90 dark:bg-slate-800/90 shadow-md py-4 backdrop-blur-sm sticky top-0 z-10">
+        <header className="bg-white/90 dark:bg-slate-800/90 shadow-md py-4 backdrop-blur-sm z-10">
           <div className="container mx-auto px-4 max-w-[1600px]">
             <div className="flex flex-col md:flex-row md:items-center gap-4">
               <div className="flex justify-between items-center">
