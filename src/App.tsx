@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import DonationBanner from 'components/DonationBanner';
 import Footer from 'components/Footer';
@@ -9,9 +9,6 @@ import { loadCoordinationData, getLandCoordinates } from './utils/imageCoordUtil
 import PlotFinderPage from './pages/PlotFinderPage';
 import OwnersPage from './pages/OwnersPage';
 
-// Базовый путь для GitHub Pages
-const basename = process.env.PUBLIC_URL || '';
-
 // Компонент для навигации
 const Navigation: React.FC = () => {
   const location = useLocation();
@@ -19,9 +16,9 @@ const Navigation: React.FC = () => {
   return (
     <div className="flex space-x-6">
       <Link
-        to={`${basename}/`}
+        to="/"
         className={`text-lg font-medium transition-colors ${
-          location.pathname === `${basename}/` || location.pathname === `${basename}`
+          location.pathname === '/' || location.pathname === ''
             ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#f85266] to-[#b243a7]'
             : 'text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white'
         }`}
@@ -29,9 +26,9 @@ const Navigation: React.FC = () => {
         Plot Finder
       </Link>
       <Link
-        to={`${basename}/owners`}
+        to="/owners"
         className={`text-lg font-medium transition-colors ${
-          location.pathname === `${basename}/owners`
+          location.pathname === '/owners'
             ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#f85266] to-[#b243a7]'
             : 'text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white'
         }`}
@@ -139,7 +136,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Router basename={basename}>
+    <Router>
       <div className={`min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-white transition-colors duration-200`}>
         
         <div className="w-full">
