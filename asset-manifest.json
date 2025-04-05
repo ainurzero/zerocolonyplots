@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/zerocolonyplots/static/css/main.44bf5957.css",
-    "main.js": "/zerocolonyplots/static/js/main.766fcad4.js",
+    "main.js": "/zerocolonyplots/static/js/main.e667f0ec.js",
     "index.html": "/zerocolonyplots/index.html",
     "static/media/Azonix.otf": "/zerocolonyplots/static/media/Azonix.84834a1e2844526ad276.otf",
     "main.44bf5957.css.map": "/zerocolonyplots/static/css/main.44bf5957.css.map",
-    "main.766fcad4.js.map": "/zerocolonyplots/static/js/main.766fcad4.js.map"
+    "main.e667f0ec.js.map": "/zerocolonyplots/static/js/main.e667f0ec.js.map"
   },
   "entrypoints": [
     "static/css/main.44bf5957.css",
-    "static/js/main.766fcad4.js"
+    "static/js/main.e667f0ec.js"
   ]
 }
