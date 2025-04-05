@@ -16,7 +16,6 @@ interface OwnersPageProps {
 const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
   const [owners, setOwners] = useState<Owner[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'landsCount' | 'percentage'>('landsCount');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [expandedOwner, setExpandedOwner] = useState<string | null>(null);
   
@@ -67,29 +66,19 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
       ? owners.filter(owner => owner.address.toLowerCase().includes(searchTerm.toLowerCase()))
       : owners;
     
-    // Сортировка
+    // Сортировка только по количеству земель
     return [...filtered].sort((a, b) => {
-      const valueA = a[sortBy];
-      const valueB = b[sortBy];
-      
       if (sortOrder === 'asc') {
-        return valueA - valueB;
+        return a.landsCount - b.landsCount;
       } else {
-        return valueB - valueA;
+        return b.landsCount - a.landsCount;
       }
     });
-  }, [owners, searchTerm, sortBy, sortOrder]);
+  }, [owners, searchTerm, sortOrder]);
 
-  // Обработчики для сортировки
-  const handleSortChange = (value: 'landsCount' | 'percentage') => {
-    if (sortBy === value) {
-      // Если уже сортируем по этому полю, меняем порядок
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      // Если выбрано новое поле, устанавливаем его и сбрасываем порядок на desc
-      setSortBy(value);
-      setSortOrder('desc');
-    }
+  // Обработчик изменения сортировки
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
   
   // Обработчик клика по владельцу
@@ -115,61 +104,9 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
     );
   }
 
-  // Функция для форматирования адреса
-  const formatAddress = (address: string) => {
-    if (address === 'Others') return 'Others';
-    return `${address.slice(0, 8)}...${address.slice(-6)}`;
-  };
-
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Land Owners</h1>
-      
-      {/* Фильтры и поиск */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
-              Search by address
-            </label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search address..."
-              className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
-              Sort by
-            </label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleSortChange('landsCount')}
-                className={`px-4 py-2 rounded-md ${
-                  sortBy === 'landsCount' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white'
-                }`}
-              >
-                Number of Lands {sortBy === 'landsCount' && (sortOrder === 'asc' ? '↑' : '↓')}
-              </button>
-              <button
-                onClick={() => handleSortChange('percentage')}
-                className={`px-4 py-2 rounded-md ${
-                  sortBy === 'percentage' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white'
-                }`}
-              >
-                Percentage {sortBy === 'percentage' && (sortOrder === 'asc' ? '↑' : '↓')}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       
       {/* График распределения владельцев */}
       <OwnersChart owners={owners} loading={loading} />
@@ -200,6 +137,33 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
         </div>
       </div>
       
+      {/* Фильтры и поиск */}
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-4">
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
+              Search by address
+            </label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search address..."
+              className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
+          <div>
+            <button
+              onClick={toggleSortOrder}
+              className="px-4 py-2 rounded-md bg-blue-600 text-white"
+            >
+              Sort by Land Count {sortOrder === 'asc' ? '↑' : '↓'}
+            </button>
+          </div>
+        </div>
+      </div>
+      
       {/* Список владельцев */}
       <div className="space-y-4">
         {filteredAndSortedOwners.length === 0 ? (
@@ -219,8 +183,8 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
                 <div className="flex justify-between flex-wrap gap-2">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-slate-800 dark:text-white font-mono">
-                        {formatAddress(owner.address)}
+                      <h3 className="font-bold text-slate-800 dark:text-white font-mono break-all">
+                        {owner.address}
                       </h3>
                       <button className="text-blue-500 hover:text-blue-700 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -232,7 +196,6 @@ const OwnersPage: React.FC<OwnersPageProps> = ({ lands, loading }) => {
                         </svg>
                       </button>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 break-all">{owner.address}</p>
                   </div>
                   <div className="flex gap-3 items-start">
                     <div className="text-right">
